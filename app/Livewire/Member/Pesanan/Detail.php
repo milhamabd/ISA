@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Member\Pesanan;
 
 use App\Models\Kantor;
@@ -63,64 +62,19 @@ class Detail extends Component
 
     public function checkout()
     {
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = config('midtrans.server_key');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
+        $data = Pesanan::with(['mobil', 'profile', 'driver', 'transaksipembayaran'])->findOrFail($this->pesananId);
 
-        $params = array(
-            'transaction_details'   => array(
-                'order_id'      => $this->pesananId,
-                'gross_amount'  => $this->totalBayar,
-            ),
-            'item_details'          => array(
-                [
-                    'id'            => $this->mobilId,
-                    'price'         => $this->totalBayar,
-                    'quantity'      => 1,
-                    'name'          => $this->namaMobil,
-                    'brand'         => $this->merekMobil,
-                    'category'      => $this->jenisMobil,
-                    'merchant_name' => $this->kantor
-                ],
-            ),
-            'customer_details'      => array(
-                'first_name'    => $this->namaPemesan,
-                'last_name'     => '',
-                'email'         => $this->emailPemesan,
-                'phone'         => '+62' . substr($this->noTelpPemesan, 1),
-            ),
-            'enabled_payments'      => array(
-                'permata_va',
-                'bca_va',
-                'bni_va',
-                'bri_va',
-                'credit_card',
-                'Indomaret',
-                'alfamart',
-            ),
-            'expiry'                => array(
-                'unit'          => 'hours',
-                'duration'      => 2
-            ),
-        );
-
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-        TransaksiPembayaran::create([
-            'pesanan_id'    => $this->pesananId,
-            'token'         => $snapToken
-        ]);
+        $transaksi = new TransaksiPembayaran();
+        $transaksi->pesanan_id = $this->pesananId;
+        $transaksi->token = '12'; // Ganti dengan nilai token yang sesuai
+        $transaksi->save();
 
         session()->flash('success', 'Lanjutkan Pembayaran anda !.');
 
         $this->close();
 
-        $this->redirectRoute('member-pesanan-detail', ['id' => $this->pesananId]);
+        // Redirect ke route redirect-to-payment dengan parameter order_id dan amount
+        return redirect()->route('redirect-to-payment', ['order_id' => $this->pesananId, 'amount' => $this->totalBayar]);
     }
 
     public function close()

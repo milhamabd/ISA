@@ -16,10 +16,10 @@ class MemberOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // check role id user
+        // Check if user is authenticated
+        if (!Auth::check() || Auth::user()->role_id !== 2) {
+            // Redirect to a specific route or page, e.g., login page or a forbidden page
 
-        if (Auth::user()->role_id !== 2) {
-            return redirect()->back();
         }
 
         return $next($request);

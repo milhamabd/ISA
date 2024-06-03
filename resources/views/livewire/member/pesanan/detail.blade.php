@@ -1,11 +1,8 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}"></script>
 @endpush
 
 <div class="container">
-
     @if (session()->has('success'))
         <x-toast alert="success" message="{{ session()->get('success') }}" />
     @endif
@@ -17,9 +14,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         {{-- box-image --}}
-                        <div class="box-card-image rounded p-2"
-                            style="background-image: url('{{ asset('images/backgrounds/card-bg.png') }}');">
-
+                        <div class="box-card-image rounded p-2" style="background-image: url('{{ asset('images/backgrounds/card-bg.png') }}');">
                             {{-- card-content-header --}}
                             <div class="d-flex justify-content-between align-items-center">
                                 {{-- car name and year --}}
@@ -28,21 +23,16 @@
                                     <h6 class="fs-2 text-white ms-2">({{ $data->mobil->tahun_mobil }})</h6>
                                 </div>
                                 {{-- end car name and year --}}
-
                                 {{-- car merek --}}
                                 <div class="text-card-merk">
-                                    <h5 class="card-title text-white">{{ $data->mobil->merekmobil->merek_mobil }}
-                                    </h5>
+                                    <h5 class="card-title text-white">{{ $data->mobil->merekmobil->merek_mobil }}</h5>
                                 </div>
                                 {{-- end car merk --}}
                             </div>
                             {{-- end card content-header --}}
-
                             {{-- image car --}}
-                            <img src="{{ asset('images/cars/' . $data->mobil->foto) }}" class="img-fluid"
-                                alt="...">
+                            <img src="{{ asset('images/cars/' . $data->mobil->foto) }}" class="img-fluid" alt="...">
                             {{-- end image car --}}
-
                             {{-- spesifikasi --}}
                             <div class="w-100 mb-2 d-flex justify-content-center align-items-center">
                                 <h6 class="fs-4 text-white">{{ $data->mobil->jenismobil->jenis_mobil }}</h6>
@@ -74,7 +64,6 @@
                                 </div>
                             </div>
                             {{-- end spesifikasi --}}
-
                         </div>
                         {{-- end box-image --}}
                     </div>
@@ -110,65 +99,44 @@
                         @endif
                         <div class="w-100 d-flex justify-content-between align-items-center">
                             <h6>Harga Pesanan</h6>
-                            <p class="text-muted">
-                                Rp. {{ number_format($data->total_harga, 0, ',', '.') }}
-                            </p>
+                            <p class="text-muted">Rp. {{ number_format($data->total_harga, 0, ',', '.') }}</p>
                         </div>
                         <div class="w-100 d-flex justify-content-between align-items-center">
                             <h6>Lama Pesanan</h6>
-                            <p class="text-muted">
-                                {{ $data->jumlah_hari }} Hari
-                            </p>
+                            <p class="text-muted">{{ $data->jumlah_hari }} Hari</p>
                         </div>
                         <div class="w-100 d-flex justify-content-between align-items-center">
                             <h6>Total Harga</h6>
-                            <p class="text-muted">
-                                Rp. {{ number_format($data->total_bayar, 0, ',', '.') }}
-                            </p>
+                            <p class="text-muted">Rp. {{ number_format($data->total_bayar, 0, ',', '.') }}</p>
                         </div>
-
                         @if ($data->status_bayar == 'paid')
                             <div class="w-100 d-flex justify-content-between align-items-center">
                                 <h6>Status Pembayaran</h6>
-                                <p class="text-white badge bg-success">
-                                    {{ $data->status_bayar }}
-                                </p>
+                                <p class="text-white badge bg-success">{{ $data->status_bayar }}</p>
                             </div>
                         @else
                             <div class="w-100 d-flex justify-content-between align-items-center">
                                 <h6>Status Pembayaran</h6>
-                                <p class="text-white badge bg-danger">
-                                    {{ $data->status_bayar }}
-                                </p>
+                                <p class="text-white badge bg-danger">{{ $data->status_bayar }}</p>
                             </div>
                         @endif
-
                         @if ($data->status_bayar == 'unpaid' || $data->status_bayar == 'paid')
                             <div class="w-100 d-flex justify-content-between align-items-center">
                                 <h6>Keterangan</h6>
                                 <p class="text-muted">{{ $data->keterangan }}</p>
                             </div>
                         @endif
-
                         <div class="w-100 d-flex justify-content-between align-items-center mt-1">
                             <a href="{{ route('member-pesanan') }}" wire:navigate class="btn btn-dark">KEMBALI</a>
-                            @if ($data->status_bayar == 'pending' && $data->transaksipembayaran == null)
+                            @if ($data->status_bayar == 'pending')
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn btn-success" wire:click="setCheckout"
-                                        data-bs-toggle="modal" data-bs-target="#modal-checkout">
-                                        CHECK OUT
-                                    </button>
-                                </div>
-                            @elseif ($data->status_bayar == 'pending')
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn btn-orange" id="pay-button">
+                                    <a href="{{ route('redirect-to-payment', ['order_id' => $data->id, 'amount' => $data->total_bayar]) }}" class="btn btn-orange">
                                         BAYAR
-                                    </button>
+                                    </a>
                                 </div>
                             @else
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <a href="{{ route('export-invoice', $data->id) }}" target="_blank"
-                                        class="btn btn-danger">
+                                    <a href="{{ route('export-invoice', $data->id) }}" target="_blank" class="btn btn-danger">
                                         INVOICE
                                     </a>
                                 </div>
@@ -176,25 +144,12 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             {{-- end card body --}}
-
             <x-pesanan.modal-checkout />
-
-            {{-- form hidden callback response --}}
-            <form action="{{ route('midtrans-callback') }}" method="post" id="form-callback">
-                <input type="hidden" name="order_id" id="order_id">
-                <input type="hidden" name="status_code" id="status_code">
-                <input type="hidden" name="gross_amount" id="gross_amount">
-                <input type="hidden" name="transaction_status" id="transaction_status">
-            </form>
-            {{-- end form hidden callback response --}}
-
         </div>
     </div>
 </div>
-
 
 @push('scripts')
     <script>
@@ -208,39 +163,4 @@
             }, 3000);
         })
     </script>
-
-    @if ($data->transaksipembayaran != null)
-        <script>
-            // For example trigger on button clicked, or any time you need
-            var payButton = document.getElementById('pay-button');
-            payButton.addEventListener('click', function() {
-                // Trigger snap popup. @TODO: Replace TRANSACTION_TOKEN_HERE with your transaction token
-                window.snap.pay('{{ $data->transaksipembayaran->token }}', {
-                    onSuccess: function(result) {
-                        handleFormSubmit(result);
-                    },
-                    // onPending: function(result) {
-                    //     window.loaction.reload();
-                    //     console.log('pandding  : ', result)
-                    // },
-                    onError: function(result) {
-                        handleFormSubmit(result);
-                    },
-                    // onClose: function() {
-                    //     alert('you closed the popup without finishing the payment');
-                    // }
-                });
-            });
-
-            function handleFormSubmit(result) {
-                $('#order_id').val(result.order_id)
-                $('#status_code').val(result.status_code)
-                $('#gross_amount').val(result.gross_amount)
-                $('#transaction_status').val(result.transaction_status)
-
-                $('#form-callback').submit();
-
-            }
-        </script>
-    @endif
 @endpush

@@ -76,4 +76,6 @@ class Index extends Component
             'history'   => $history
         ]);
     }
+
+
 }

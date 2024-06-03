@@ -1,7 +1,7 @@
 {{-- navbar --}}
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand  fs-5 fw-5" href="{{ route('home') }}" wire:navigate>{{ $kantor->nama }}</a>
+        {{-- <a class="navbar-brand  fs-5 fw-5" href="{{ route('home') }}" wire:navigate>{{ $kantor->nama }}</a> --}}
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">

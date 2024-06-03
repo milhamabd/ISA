@@ -51,4 +51,12 @@ class Pesanan extends Model
     {
         return $this->hasOne(Pengembalian::class);
     }
+    public function konfirmasiPembayaran($id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+        $pesanan->status_bayar = 'paid';
+        $pesanan->save();
+
+        return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi.');
+    }
 }

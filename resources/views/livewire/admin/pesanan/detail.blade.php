@@ -175,6 +175,9 @@
                                     data-bs-toggle="modal" data-bs-target="#modal-update">
                                     UPDATE
                                 </button>
+                                <a href="{{ route('confirm-payment', $data->id) }}" class="btn btn-success ms-3">
+                                    KONFIRMASI PEMBAYARAN
+                                </a>
                             @elseif ($data->status_bayar == 'paid')
                                 <button type="button" data-bs-toggle="modal" data-bs-target="#modal-pengembalian"
                                     class="btn btn-primary" wire:click="setPengembalian">

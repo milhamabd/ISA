@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DomPdfController;
+use App\Http\Controllers\PaymentController;
 use App\Livewire\Admin\Dashboard\Index as AdminDashboardIndex;
 use App\Livewire\Admin\JenisMobil\Index as AdminJenisMobilIndex;
 use App\Livewire\Admin\Kantor\Index as AdminKantorIndex;
@@ -36,74 +37,69 @@ Route::middleware('auth')->group(function () {
 
   // logout
   Route::get('/auth/logout', function () {
-
     Auth::logout();
-
     session()->invalidate();
     session()->regenerateToken();
     session()->flash('success', 'Terima kasih !');
-
     return redirect()->route('auth-signin');
-  })->name('auth-logout');
+})->name('auth-logout');
 
-  // profile
-  Route::prefix('profile')->group(function () {
+// profile
+Route::prefix('profile')->group(function () {
     Route::get('', ProfileIndex::class)->name('profile');
     Route::get('/create', ProfileCreate::class)->name('profile-create');
-  });
+});
 
-  // middleware admin only
-  Route::middleware('admin-only')->group(function () {
+// middleware admin only
+Route::middleware('admin-only')->group(function () {
     Route::prefix('admin')->group(function () {
-
-      // dashboard
-      Route::get('dashboard', AdminDashboardIndex::class)->name('admin-dashboard');
-
-      // jenis mobil
-      Route::get('jenis-mobil', AdminJenisMobilIndex::class)->name('admin-jenis-mobil');
-
-      // merek mobil
-      Route::get('merek-mobil', AdminMerekMobilIndex::class)->name('admin-merek-mobil');
-
-      // mobil
-      Route::get('mobil', AdminMobilIndex::class)->name('admin-mobil');
-
-      // kantor
-      Route::get('kantor', AdminKantorIndex::class)->name('admin-kantor');
-
-      // supir
-      Route::get('supir', AdminSupirIndex::class)->name('admin-supir');
-
-      // pesanan
-      Route::get('pensanan', AdminPesananIndex::class)->name('admin-pesanan');
-      Route::get('pesanan/show/{id}', AdminPesananShow::class)->name('admin-pesanan-show');
-
-      // pengembalian
-      Route::get('pengembalian', AdminPengembalianIndex::class)->name('admin-pengembalian');
+        // dashboard
+        Route::get('dashboard', AdminDashboardIndex::class)->name('admin-dashboard');
+        // jenis mobil
+        Route::get('jenis-mobil', AdminJenisMobilIndex::class)->name('admin-jenis-mobil');
+        // merek mobil
+        Route::get('merek-mobil', AdminMerekMobilIndex::class)->name('admin-merek-mobil');
+        // mobil
+        Route::get('mobil', AdminMobilIndex::class)->name('admin-mobil');
+        // kantor
+        Route::get('kantor', AdminKantorIndex::class)->name('admin-kantor');
+        // supir
+        Route::get('supir', AdminSupirIndex::class)->name('admin-supir');
+        // pesanan
+        Route::get('pensanan', AdminPesananIndex::class)->name('admin-pesanan');
+        Route::get('pesanan/show/{id}', AdminPesananShow::class)->name('admin-pesanan-show');
+        // pengembalian
+        Route::get('pengembalian', AdminPengembalianIndex::class)->name('admin-pengembalian');
     });
-  });
+});
 
-  // middleware member only
-  Route::middleware('member-only')->group(function () {
-
+// middleware member only
+Route::middleware('member-only')->group(function () {
     // prefix member
     Route::prefix('member')->group(function () {
+        // dashboard
+        Route::get('dashboard', MemberDashboardIndex::class)->name('member-dashboard');
+        // mobil
+        Route::get('mobil', MemberMobilIndex::class)->name('member-mobil');
+        // pesanan
+        Route::get('pesanan', MemberPesananIndex::class)->name('member-pesanan');
+        Route::get('pesanan/detail/{id}', MemberPesananDetail::class)->name('member-pesanan-detail');
+        // pengembalian
+        Route::get('pengembalian', MemberPengembalianIndex::class)->name('member-pengembalian');
+        // export
+        Route::get('export/pdf/{id}', [DomPdfController::class, 'pdf'])->name('export-invoice');
 
-      // dashboard
-      Route::get('dashboard', MemberDashboardIndex::class)->name('member-dashboard');
+        // redirect to payment
+        Route::get('/redirect-to-payment', [PaymentController::class, 'redirectToPayment'])->name('redirect-to-payment');
 
-      // mobil
-      Route::get('mobil', MemberMobilIndex::class)->name('member-mobil');
 
-      // pesanan
-      Route::get('pesanan', MemberPesananIndex::class)->name('member-pesanan');
-      Route::get('pesanan/detail/{id}', MemberPesananDetail::class)->name('member-pesanan-detail');
 
-      // pengembalian
-      Route::get('pengembalian', MemberPengembalianIndex::class)->name('member-pengembalian');
+Route::get('redirect-to-payment', [PaymentController::class, 'redirectToPayment'])->name('redirect-to-payment');
 
-      // export
-      Route::get('export/pdf/{id}', [DomPdfController::class, 'pdf'])->name('export-invoice');
+
+Route::get('/confirm-payment/{id}', [PaymentController::class, 'confirmPayment'])->name('confirm-payment');
+
+
     });
-  });
+});
 });
